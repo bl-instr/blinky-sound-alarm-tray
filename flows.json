@@ -35,6 +35,11 @@
         "sessionExpiry": ""
     },
     {
+        "id": "e90876f33ebeb9c5",
+        "type": "soundfile-directory",
+        "directory": "html-static"
+    },
+    {
         "id": "08ee1fafdc4c41fc",
         "type": "function",
         "z": "ab26446c7f3a82c7",
@@ -643,8 +648,8 @@
         "type": "function",
         "z": "ab26446c7f3a82c7",
         "name": "parse alarm message",
-        "func": "let tray = flow.get('tray');\nif (tray.soundOn.value == 0) return [null,null];\nlet alertType = msg.payload.content.split(\":\")[0];\nalertType = alertType.split(\"-\")[1];\nlet isAlarmType = false;\nlet isLow = false;\nswitch (alertType)\n{\n    case \"LOLO\":\n        isAlarmType = true;\n        isLow = true;\n        break;\n    case \"LOW\":\n        isAlarmType = false;\n        isLow = true;\n        break;\n    case \"HIGH\":\n        isAlarmType = false;\n        isLow = false;\n        break;\n    case \"HIHI\":\n        isAlarmType = true;\n        isLow = false;\n        break;\n    default:\n        break;\n}\nif (!isAlarmType && tray.warningSoundOn.value == 0) return [null,null];\n\nlet topicSplit = msg.payload.topic.split(\"/\");\nlet trayField = topicSplit[0];\nlet nameField = topicSplit[1];\nlet cubeField = topicSplit[2];\n\nif (tray.trayFilter.value != \"*\")\n{\n    if (tray.trayFilter.value != trayField ) return [null,null];\n}\nif (tray.nameFilter.value != \"*\")\n{\n    if (tray.nameFilter.value != nameField ) return [null,null];\n}\nif (tray.cubeFilter.value != \"*\")\n{\n    if (tray.cubeFilter.value != cubeField ) return [null,null];\n}\nlet filename = \"html-static/warning.wav\";\nif (isAlarmType) filename = \"html-static/alarm.wav\";\n\nlet espeak = 'high.\"';\nif (isLow) espeak = 'low.\"';\nespeak = '\"' + trayField + ' ' + nameField + ' ' + cubeField + ' is ' + espeak;\nlet speechMsg = {topic:\"espeak\", payload: espeak};\nif (tray.speechOn.value == 0) speechMsg = null;\nreturn [{topic:'beep',payload:filename},speechMsg];",
-        "outputs": 2,
+        "func": "let tray = flow.get('tray');\nif (tray.soundOn.value == 0) return [null,null];\nlet alertType = msg.payload.content.split(\":\")[0];\nalertType = alertType.split(\"-\")[1];\nlet isAlarmType = false;\nlet isLow = false;\nswitch (alertType)\n{\n    case \"LOLO\":\n        isAlarmType = true;\n        isLow = true;\n        break;\n    case \"LOW\":\n        isAlarmType = false;\n        isLow = true;\n        break;\n    case \"HIGH\":\n        isAlarmType = false;\n        isLow = false;\n        break;\n    case \"HIHI\":\n        isAlarmType = true;\n        isLow = false;\n        break;\n    default:\n        break;\n}\nif (!isAlarmType && tray.warningSoundOn.value == 0) return null;\n\nlet topicSplit = msg.payload.topic.split(\"/\");\nlet trayField = topicSplit[0];\nlet nameField = topicSplit[1];\nlet cubeField = topicSplit[2];\n\nif (tray.trayFilter.value != \"*\")\n{\n    if (tray.trayFilter.value != trayField ) return null;\n}\nif (tray.nameFilter.value != \"*\")\n{\n    if (tray.nameFilter.value != nameField ) return null;\n}\nif (tray.cubeFilter.value != \"*\")\n{\n    if (tray.cubeFilter.value != cubeField ) return null;\n}\nlet filename = \"warning.wav\";\nif (isAlarmType) filename = \"alarm.wav\";\n\nreturn {topic:'beep',payload:filename,file:filename};",
+        "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
@@ -653,96 +658,7 @@
         "y": 600,
         "wires": [
             [
-                "5868b91b7b5eafc5"
-            ],
-            [
-                "e584790c5621cdc0"
-            ]
-        ]
-    },
-    {
-        "id": "5868b91b7b5eafc5",
-        "type": "file in",
-        "z": "ab26446c7f3a82c7",
-        "name": "",
-        "filename": "payload",
-        "filenameType": "msg",
-        "format": "",
-        "chunk": false,
-        "sendError": false,
-        "encoding": "none",
-        "allProps": false,
-        "x": 1220,
-        "y": 560,
-        "wires": [
-            [
-                "83b06542028eb839"
-            ]
-        ]
-    },
-    {
-        "id": "83b06542028eb839",
-        "type": "function",
-        "z": "ab26446c7f3a82c7",
-        "name": "payload to speech",
-        "func": "msg['speech'] = msg.payload;\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1430,
-        "y": 600,
-        "wires": [
-            [
-                "4c04ec7c387133a1"
-            ]
-        ]
-    },
-    {
-        "id": "9b360668719f5d62",
-        "type": "exec",
-        "z": "ab26446c7f3a82c7",
-        "command": "espeak --stdout",
-        "addpay": "payload",
-        "append": "",
-        "useSpawn": "false",
-        "timer": "",
-        "winHide": false,
-        "oldrc": false,
-        "name": "Espeak",
-        "x": 1380,
-        "y": 680,
-        "wires": [
-            [
-                "83b06542028eb839"
-            ],
-            [],
-            []
-        ]
-    },
-    {
-        "id": "e584790c5621cdc0",
-        "type": "delay",
-        "z": "ab26446c7f3a82c7",
-        "name": "",
-        "pauseType": "delay",
-        "timeout": "1",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "1",
-        "rateUnits": "second",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": false,
-        "allowrate": false,
-        "outputs": 1,
-        "x": 1220,
-        "y": 680,
-        "wires": [
-            [
-                "9b360668719f5d62"
+                "df5cbac98351aee4"
             ]
         ]
     },
@@ -772,13 +688,86 @@
         ]
     },
     {
-        "id": "4c04ec7c387133a1",
-        "type": "play audio",
+        "id": "df5cbac98351aee4",
+        "type": "play-soundfile",
         "z": "ab26446c7f3a82c7",
         "name": "",
-        "voice": "",
-        "x": 1670,
-        "y": 600,
-        "wires": []
+        "directory": "e90876f33ebeb9c5",
+        "file": "",
+        "options": "{}",
+        "allow_multiple": false,
+        "x": 1360,
+        "y": 680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f209b1f1b0b56347",
+        "type": "inject",
+        "z": "ab26446c7f3a82c7",
+        "name": "alarm",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "file",
+                "v": "alarm.wav",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "alarm",
+        "payload": "",
+        "payloadType": "date",
+        "x": 1050,
+        "y": 680,
+        "wires": [
+            [
+                "df5cbac98351aee4"
+            ]
+        ]
+    },
+    {
+        "id": "02abdaecf76eb68a",
+        "type": "inject",
+        "z": "ab26446c7f3a82c7",
+        "name": "Warning",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "file",
+                "v": "warning.wav",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "warning",
+        "payload": "",
+        "payloadType": "date",
+        "x": 1060,
+        "y": 760,
+        "wires": [
+            [
+                "df5cbac98351aee4"
+            ]
+        ]
     }
 ]
