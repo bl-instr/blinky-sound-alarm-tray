@@ -20,9 +20,8 @@
   },
   "homepage": "",
   "dependencies": {
-    "@node-red-contrib-themes/theme-collection": "^3.0.6",
-    "node-red": "^3.0.2",
-    "node-red-contrib-speakerpi": "~0.0.43",
-    "node-red-dashboard": "^3.4.0"
+    "@node-red-contrib-themes/theme-collection": "3.0.6",
+    "node-red": "3.0.2",
+    "node-red-contrib-play-audio": "^2.5.0"
   }
 }

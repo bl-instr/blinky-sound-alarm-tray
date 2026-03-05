@@ -8,101 +8,6 @@
         "env": []
     },
     {
-        "id": "6ad7c930.1a06b8",
-        "type": "ui_base",
-        "theme": {
-            "name": "theme-dark",
-            "lightTheme": {
-                "default": "#0094CE",
-                "baseColor": "#0094CE",
-                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
-                "edited": true,
-                "reset": false
-            },
-            "darkTheme": {
-                "default": "#097479",
-                "baseColor": "#097479",
-                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
-                "edited": true,
-                "reset": false
-            },
-            "customTheme": {
-                "name": "Untitled Theme 1",
-                "default": "#4B7930",
-                "baseColor": "#4B7930",
-                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
-            },
-            "themeState": {
-                "base-color": {
-                    "default": "#097479",
-                    "value": "#097479",
-                    "edited": false
-                },
-                "page-titlebar-backgroundColor": {
-                    "value": "#097479",
-                    "edited": false
-                },
-                "page-backgroundColor": {
-                    "value": "#111111",
-                    "edited": false
-                },
-                "page-sidebar-backgroundColor": {
-                    "value": "#333333",
-                    "edited": false
-                },
-                "group-textColor": {
-                    "value": "#0eb8c0",
-                    "edited": false
-                },
-                "group-borderColor": {
-                    "value": "#555555",
-                    "edited": false
-                },
-                "group-backgroundColor": {
-                    "value": "#333333",
-                    "edited": false
-                },
-                "widget-textColor": {
-                    "value": "#eeeeee",
-                    "edited": false
-                },
-                "widget-backgroundColor": {
-                    "value": "#097479",
-                    "edited": false
-                },
-                "widget-borderColor": {
-                    "value": "#333333",
-                    "edited": false
-                },
-                "base-font": {
-                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
-                }
-            },
-            "angularTheme": {
-                "primary": "indigo",
-                "accents": "blue",
-                "warn": "red",
-                "background": "grey"
-            }
-        },
-        "site": {
-            "name": "Chill Detector",
-            "hideToolbar": "false",
-            "allowSwipe": "false",
-            "dateFormat": "DD/MM/YYYY",
-            "sizes": {
-                "sx": 48,
-                "sy": 48,
-                "gx": 6,
-                "gy": 6,
-                "cx": 6,
-                "cy": 6,
-                "px": 0,
-                "py": 0
-            }
-        }
-    },
-    {
         "id": "84d80994.260508",
         "type": "mqtt-broker",
         "name": "MQTT Broker",
@@ -114,7 +19,6 @@
         "protocolVersion": "4",
         "keepalive": "60",
         "cleansession": true,
-        "autoUnsubscribe": true,
         "birthTopic": "",
         "birthQos": "0",
         "birthPayload": "",
@@ -137,7 +41,6 @@
         "name": "Save tray config in Memory",
         "func": "let tray = msg.payload;\nflow.set('tray', msg.payload);\ntray.trayControl.value = 0;\nreturn {topic: 'setting', payload:{'cube':'trayControl', value:tray.trayControl.value}};\n",
         "outputs": 1,
-        "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
@@ -186,7 +89,6 @@
         "name": "Init flow Variables",
         "func": "var trayProps = {\n    box         :   env.get(\"BOX\"),\n    type        :   env.get(\"TRAYTYPE\"),\n    name        :   env.get(\"TRAYNAME\"),\n};\nflow.set('trayProps',trayProps);\nflow.set('tray', null);\nreturn {topic: \"getTrayProps\", payload: true};  \n",
         "outputs": 1,
-        "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
@@ -310,7 +212,6 @@
         "name": "Save config file",
         "func": "let cubeAlarm = flow.get('tray')[msg.payload.cube].alarm;\ncubeAlarm.limits.lolo = msg.payload.limits.lolo;\ncubeAlarm.limits.low  = msg.payload.limits.low;\ncubeAlarm.limits.high = msg.payload.limits.high;\ncubeAlarm.limits.hihi = msg.payload.limits.hihi;\nif (msg.trayConfig.tray[msg.payload.cube].hasOwnProperty('enabled'))\n{\n    if (msg.payload.hasOwnProperty('enabled'))\n    {\n        msg.trayConfig.tray[msg.payload.cube].enabled = msg.payload.enabled;\n    }\n}\nreturn {topic:'newData', payload:true};\n\n",
         "outputs": 1,
-        "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
@@ -330,7 +231,6 @@
         "name": "Create Setting",
         "func": "let normalSettingMsg = null;\nlet trayControlMessage = null;\nlet tray = flow.get('tray');\nif (tray == null) return [normalSettingMsg,trayControlMessage];\nif (tray[msg.payload.cube].hasOwnProperty('enabled'))\n{\n    if (tray[msg.payload.cube].enabled == 0 ) [normalSettingMsg,trayControlMessage];\n}\n\nswitch (msg.payload.cube) \n{\n    case 'alias':\n        tray.alias.value = msg.payload.value;\n        normalSettingMsg = { topic: 'newData', payload: true };\n       break;\n    case 'trayFilter':\n        tray.trayFilter.value = msg.payload.value;\n        normalSettingMsg = { topic: 'newData', payload: true };\n       break;\n    case 'nameFilter':\n        tray.nameFilter.value = msg.payload.value;\n        normalSettingMsg = { topic: 'newData', payload: true };\n       break;\n    case 'cubeFilter':\n        tray.cubeFilter.value = msg.payload.value;\n        normalSettingMsg = { topic: 'newData', payload: true };\n       break;\n    case 'soundOn':\n        tray.soundOn.value = msg.payload.value;\n        normalSettingMsg = { topic: 'newData', payload: true };\n       break;\n    case 'warningSoundOn':\n        tray.warningSoundOn.value = msg.payload.value;\n        normalSettingMsg = { topic: 'newData', payload: true };\n       break;\n    case 'speechOn':\n        tray.speechOn.value = msg.payload.value;\n        normalSettingMsg = { topic: 'newData', payload: true };\n       break;\n    case 'trayControl':\n        switch(msg.payload.value)\n        {\n            case 0:\n                tray.trayControl.value = 0;\n                break;\n            case 1:\n                tray.trayControl.value = -1;\n                break;\n            case 2:\n                if (tray.trayControl.value > 0)\n                {\n                    tray.trayControl.value = 2;\n                    let trayProps  = flow.get('trayProps');\n                    node.warn(\"Asking for tray from database\");\n                    trayControlMessage =\n                    {\n                        topic: trayProps.box + '/tray/' + trayProps.type + '/' + trayProps.name + '/echo',\n                        payload: JSON.stringify({ topic: trayProps.box + '/tray/' + trayProps.type + '/' + trayProps.name + '/setting/echo' })\n                    };\n                }\n                break;\n            default:\n                tray.trayControl.value = 0;\n                break;\n        }\n        normalSettingMsg = { topic: 'newData', payload: true };\n       break;\n    default:\n        break;\n}\nflow.set('settingInProgress', false);\nreturn [normalSettingMsg,trayControlMessage];\n\n",
         "outputs": 2,
-        "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
@@ -617,7 +517,6 @@
         "name": "MQTT subscribe topic",
         "func": "let subscribeTopic = flow.get('trayProps').box + \"/tray/\" + flow.get('trayProps').type +'/' + flow.get('trayProps').name + \"/setting/#\";\nreturn {action:\"subscribe\",topic:subscribeTopic};",
         "outputs": 1,
-        "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
@@ -746,7 +645,6 @@
         "name": "parse alarm message",
         "func": "let tray = flow.get('tray');\nif (tray.soundOn.value == 0) return [null,null];\nlet alertType = msg.payload.content.split(\":\")[0];\nalertType = alertType.split(\"-\")[1];\nlet isAlarmType = false;\nlet isLow = false;\nswitch (alertType)\n{\n    case \"LOLO\":\n        isAlarmType = true;\n        isLow = true;\n        break;\n    case \"LOW\":\n        isAlarmType = false;\n        isLow = true;\n        break;\n    case \"HIGH\":\n        isAlarmType = false;\n        isLow = false;\n        break;\n    case \"HIHI\":\n        isAlarmType = true;\n        isLow = false;\n        break;\n    default:\n        break;\n}\nif (!isAlarmType && tray.warningSoundOn.value == 0) return [null,null];\n\nlet topicSplit = msg.payload.topic.split(\"/\");\nlet trayField = topicSplit[0];\nlet nameField = topicSplit[1];\nlet cubeField = topicSplit[2];\n\nif (tray.trayFilter.value != \"*\")\n{\n    if (tray.trayFilter.value != trayField ) return [null,null];\n}\nif (tray.nameFilter.value != \"*\")\n{\n    if (tray.nameFilter.value != nameField ) return [null,null];\n}\nif (tray.cubeFilter.value != \"*\")\n{\n    if (tray.cubeFilter.value != cubeField ) return [null,null];\n}\nlet filename = \"html-static/warning.wav\";\nif (isAlarmType) filename = \"html-static/alarm.wav\";\n\nlet espeak = 'high.\"';\nif (isLow) espeak = 'low.\"';\nespeak = '\"' + trayField + ' ' + nameField + ' ' + cubeField + ' is ' + espeak;\nlet speechMsg = {topic:\"espeak\", payload: espeak};\nif (tray.speechOn.value == 0) speechMsg = null;\nreturn [{topic:'beep',payload:filename},speechMsg];",
         "outputs": 2,
-        "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
@@ -760,22 +658,6 @@
             [
                 "e584790c5621cdc0"
             ]
-        ]
-    },
-    {
-        "id": "4923d01dd1f55458",
-        "type": "speakerpi-output",
-        "z": "ab26446c7f3a82c7",
-        "choose": "filebased",
-        "filename": "test.wav",
-        "channels": "1",
-        "bitdepth": "16",
-        "samplerate": "22050",
-        "name": "",
-        "x": 1700,
-        "y": 600,
-        "wires": [
-            []
         ]
     },
     {
@@ -805,7 +687,6 @@
         "name": "payload to speech",
         "func": "msg['speech'] = msg.payload;\nreturn msg;",
         "outputs": 1,
-        "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
@@ -814,7 +695,7 @@
         "y": 600,
         "wires": [
             [
-                "4923d01dd1f55458"
+                "4c04ec7c387133a1"
             ]
         ]
     },
@@ -889,5 +770,15 @@
                 "6ac7efccceed9598"
             ]
         ]
+    },
+    {
+        "id": "4c04ec7c387133a1",
+        "type": "play audio",
+        "z": "ab26446c7f3a82c7",
+        "name": "",
+        "voice": "",
+        "x": 1670,
+        "y": 600,
+        "wires": []
     }
 ]
